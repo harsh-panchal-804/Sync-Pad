@@ -6,12 +6,12 @@ import { useEditorStore } from "@/store/useEditorStore";
 import { Item } from "@radix-ui/react-accordion";
 import { type Level } from "@tiptap/extension-heading"
 import { type ColorResult, CirclePicker, SketchPicker } from "react-color"
-import { BoldIcon, ChevronsDownIcon, HighlighterIcon, ImageIcon, ItalicIcon, Link2Icon, ListTodoIcon, LucideIcon, MessageSquarePlus, PrinterIcon, Redo2Icon, RemoveFormattingIcon, SearchIcon, SpellCheck, SpellCheck2, UnderlineIcon, Undo2Icon, UploadIcon } from "lucide-react";
+import { AlignCenterIcon, AlignJustifyIcon, AlignLeftIcon, AlignRightIcon, BoldIcon, ChevronsDownIcon, HighlighterIcon, ImageIcon, ItalicIcon, Link2Icon, ListIcon, ListOrderedIcon, ListTodoIcon, LucideIcon, MessageSquarePlus, PrinterIcon, Redo2Icon, RemoveFormattingIcon, SearchIcon, SpellCheck, SpellCheck2, UnderlineIcon, Undo2Icon, UploadIcon } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input"
-import { Dialog, DialogFooter, DialogHeader, DialogTitle,DialogContent } from "@/components/ui/dialog"
+import { Dialog, DialogFooter, DialogHeader, DialogTitle, DialogContent } from "@/components/ui/dialog"
 
 const FontFamilyButton = () => {
     const { editor } = useEditorStore();
@@ -212,51 +212,146 @@ const ImageButton = () => {
     }
     return (
         <>
-         <DropdownMenu>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <button className="h-7 min-w-7 shrink-0 flex flex-col items-center justify-center rounded-sm hover:bg-neutral-300/65 px-1.5 overflow-hidden text-sm">
+                        <ImageIcon className="w-[18px] h-[18px] mb-0.5" />
+
+                    </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    <DropdownMenuItem onClick={onUpload}>
+                        <UploadIcon className="size-4 mr-2" />
+                        Upload
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => { setIsDialogOpen(true) }}>
+                        <SearchIcon className="size-4 mr-2" />
+                        Paste image URL
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Insert Image URL</DialogTitle>
+                    </DialogHeader>
+                    <Input
+                        placeholder="Insert Image URL"
+                        value={imageURL}
+                        onChange={(e) => setImageURL(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                handleImageURLSubmit();
+                            }
+                        }}
+                    />
+                    <DialogFooter>
+                        <Button onClick={handleImageURLSubmit}>
+                            Insert
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+
+            </Dialog>
+        </>
+
+    )
+
+}
+const AlignButton = () => {
+    const { editor } = useEditorStore();
+    const alignments = [
+        {
+            label: "Align Left",
+            value: "left",
+            icon: AlignLeftIcon
+        },
+        {
+            label: "Align Center",
+            value: "center",
+            icon: AlignCenterIcon
+        },
+        {
+            label: "Align Right",
+            value: "right",
+            icon: AlignRightIcon
+        },
+        {
+            label: "Align Justify",
+            value: "justify",
+            icon: AlignJustifyIcon
+        }
+
+    ]
+    return (
+        <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <button className="h-7 min-w-7 shrink-0 flex flex-col items-center justify-center rounded-sm hover:bg-neutral-300/65 px-1.5 overflow-hidden text-sm">
-                    <ImageIcon className="w-[18px] h-[18px] mb-0.5" />
+                    <AlignLeftIcon className="w-[18px] h-[18px] mb-0.5" />
 
                 </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent>
-                <DropdownMenuItem onClick={onUpload}>
-                    <UploadIcon className="size-4 mr-2"/>
-                        Upload
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => { setIsDialogOpen(true) }}>
-                    <SearchIcon className="size-4 mr-2"/> 
-                        Paste image URL
-                </DropdownMenuItem>
+            <DropdownMenuContent className="p-1 flex flex-col gap-y-1 ">
+                {alignments.map(({ label, value, icon: Icon }) => (
+                    <button
+                        className={cn("flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-neutral-300/65",
+                            editor?.isActive({ textAlign: value }) && "bg-neutral-300/65")
+                        }
+                        key={value}
+                        onClick={() => {
+                            editor?.chain().focus().setTextAlign(value).run();
+                        }}
+                    >
+                        <Icon className="size-4" />
+                        <span className="text-sm">{label}</span>
+                    </button>
+                ))}
+
             </DropdownMenuContent>
         </DropdownMenu>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Insert Image URL</DialogTitle>
-                </DialogHeader>
-                <Input
-                placeholder="Insert Image URL"
-                value={imageURL}
-                onChange={(e)=>setImageURL(e.target.value)}
-                onKeyDown={(e)=>{
-                    if(e.key==="Enter"){
-                        handleImageURLSubmit();
-                    }
-                }}
-                />
-            <DialogFooter>
-                <Button onClick={handleImageURLSubmit}>
-                    Insert
-                </Button>
-            </DialogFooter>
-            </DialogContent>
-
-        </Dialog>
-        </>
-       
     )
+}
+const ListButton = () => {
+    const { editor } = useEditorStore();
+    const lists = [
+        {
+            label: "Bullet List",
+            icon: ListIcon,
+            isActive: () => editor?.isActive("bulletList"),
+            onClick: () => editor?.chain().focus().toggleBulletList().run()
+        },
+        {
+            label: "Ordered List",
+            icon: ListOrderedIcon,
+            isActive: () => editor?.isActive("orderedList"),
+            onClick: () => editor?.chain().focus().toggleOrderedList().run()
+        }
+    ]
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <button className="h-7 min-w-7 shrink-0 flex flex-col items-center justify-center rounded-sm hover:bg-neutral-300/65 px-1.5 overflow-hidden text-sm">
+                    <ListIcon className="w-[18px] h-[18px] mb-0.5" />
 
+                </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="p-1 flex flex-col gap-y-1 ">
+                {lists.map(({ label, icon: Icon, onClick, isActive }) => (
+                    <button
+                        className={cn("flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-neutral-300/65",
+                            isActive() && "bg-neutral-300/65")
+                        }
+                        key={label}
+                        onClick={onClick}
+                    >
+                        <Icon className="size-4" />
+                        <span className="text-sm">{label}</span>
+                    </button>
+                ))}
+
+            </DropdownMenuContent>
+        </DropdownMenu>
+    )
 }
 interface ToolBarButtonProps {
     onClick?: () => void;
@@ -380,7 +475,9 @@ function ToolBar() {
             <TextColorButton />
             <HighLightColorButton />
             <LinkButton />
-            <ImageButton/>
+            <ImageButton />
+            <AlignButton />
+            <ListButton/>
 
         </div>
     )
