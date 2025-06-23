@@ -20,6 +20,11 @@ import Image from '@tiptap/extension-image'
 import ImageResize from "tiptap-extension-resize-image"
 import { useEditorStore } from "@/store/useEditorStore"
 import Underline from '@tiptap/extension-underline'
+
+import { FontSizeExtension } from '@/extensions/font-size';
+import { LineHeightExtension } from '@/extensions/line-height';
+import Ruler from './Ruler';
+
 function Editor() {
     const limit = null;
     const { setEditor } = useEditorStore();
@@ -67,7 +72,7 @@ function Editor() {
             TableHeader,
             TableCell, Image, Link, ImageResize, Color, FontFamily, TextStyle, CharacterCount.configure({
                 limit: null
-            })],
+            }), FontSizeExtension, LineHeightExtension],
         content: `hello harsh `
     });
     const percentage = editor
@@ -78,7 +83,7 @@ function Editor() {
 
     return (
         <div className='size-full overflow-x-auto bg-[#f9f8fd] px-4 print:p-0 print:bg-white print:overflow-visible' >
-            <div className='absolute left-[85%] top-[15%] z-10'>
+            {/* <div className='absolute left-[85%] top-[15%] z-10'>
                 <div className={`character-count ${editor.storage.characterCount.characters() === limit ? 'character-count--warning' : ''}`}>
                     <svg
                         height="20"
@@ -113,7 +118,8 @@ function Editor() {
                     <br />
                     {editor.storage.characterCount.words()} words
                 </div>
-            </div>
+            </div> */}
+            <Ruler/>
             <div className='min-w-max  flex justify-center w-[816px] py-4 print:py-0 mx-auto print:w-full print:min-w-0 ' >
 
                 <EditorContent className='tip-tap' editor={editor} />
