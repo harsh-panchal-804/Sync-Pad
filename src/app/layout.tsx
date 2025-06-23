@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import {NuqsAdapter} from "nuqs/adapters/next/app"
+import { NuqsAdapter } from "nuqs/adapters/next/app"
+import { ConvexClientProvider } from "@/components/ui/Convex-Client-Provider";
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -24,6 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+
     <html lang="en">
       <head>
         <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Icon-notepad.svg/2048px-Icon-notepad.svg.png" />
@@ -32,8 +34,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NuqsAdapter>
+          <ConvexClientProvider>
 
-        {children}
+            {children}
+          </ConvexClientProvider>
+
         </NuqsAdapter>
       </body>
     </html>
