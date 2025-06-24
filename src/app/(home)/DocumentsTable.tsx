@@ -38,7 +38,7 @@ export const DocumentsTable = ({
               <TableHead>Name</TableHead>
               <TableHead>&nbsp;</TableHead>
               <TableHead className="hidden md:table-cell">Shared</TableHead>
-              <TableHead className="hidden md:table-cell">Created at</TableHead>
+              <TableHead className="hidden md:table-cell">Created on</TableHead>
             </TableRow>
           </TableHeader>
           {documents.length === 0 ? (
