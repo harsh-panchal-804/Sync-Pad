@@ -7,8 +7,10 @@ import { usePaginatedQuery, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { paginationOptsValidator } from "convex/server";
 import { DocumentsTable } from "./DocumentsTable";
+import { useSearchParam } from "@/hooks/use-search-params";
 export default function Home() {
-  const {results,status,loadMore}= usePaginatedQuery(api.documents.get,{},{initialNumItems:5});
+  const [search]=useSearchParam("search");
+  const {results,status,loadMore}= usePaginatedQuery(api.documents.get,{search},{initialNumItems:5});
 
   return (
     <div className="min-h-screen flex flex-col">
