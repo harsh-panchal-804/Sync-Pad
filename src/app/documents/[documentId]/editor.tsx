@@ -20,12 +20,24 @@ import Image from '@tiptap/extension-image'
 import ImageResize from "tiptap-extension-resize-image"
 import { useEditorStore } from "@/store/useEditorStore"
 import Underline from '@tiptap/extension-underline'
-
+import { useStorage } from '@liveblocks/react';
 import { FontSizeExtension } from '@/extensions/font-size';
 import { LineHeightExtension } from '@/extensions/line-height';
 import Ruler from './Ruler';
+import { useLiveblocksExtension } from "@liveblocks/react-tiptap"
+    ;
+import { Threads } from './Threads';
+interface EditorProps{
+    initialContent?:string | undefined;
 
-function Editor() {
+}
+function Editor({initialContent}:EditorProps) {
+    const liveblocks = useLiveblocksExtension({
+        initialContent,
+        offlineSupport_experimental:true
+    });
+    const leftMargin = useStorage((root) => root.leftMargin);
+    const rightMargin = useStorage((root) => root.rightMargin);
     const limit = null;
     const { setEditor } = useEditorStore();
     const editor = useEditor({
@@ -55,11 +67,13 @@ function Editor() {
         },
         editorProps: {
             attributes: {
-                style: "padding-left:56px;padding-right:56px",
+                style: `padding-left:${leftMargin ?? 56}px;padding-right:${rightMargin ?? 56}px`,
                 class: "focus:outline-none print:border-0 border bg-white border-[#c7c7c7] flex flex-col min-h-[1054px] w-[816px] pt-10 pr-14 pb-10 cursor-text"
             }
         },
-        extensions: [StarterKit, TextAlign.configure({
+        extensions: [StarterKit.configure({
+            history: false
+        }), TextAlign.configure({
             types: ["heading", "paragraph"]
         }), Underline, Highlight.configure({
             multicolor: true
@@ -72,7 +86,7 @@ function Editor() {
             TableHeader,
             TableCell, Image, Link, ImageResize, Color, FontFamily, TextStyle, CharacterCount.configure({
                 limit: null
-            }), FontSizeExtension, LineHeightExtension],
+            }), FontSizeExtension, LineHeightExtension, liveblocks],
         content: `hello harsh `
     });
     const percentage = editor
@@ -119,10 +133,11 @@ function Editor() {
                     {editor.storage.characterCount.words()} words
                 </div>
             </div> */}
-            <Ruler/>
+            <Ruler />
             <div className='min-w-max  flex justify-center w-[816px] py-4 print:py-0 mx-auto print:w-full print:min-w-0 ' >
 
                 <EditorContent className='tip-tap' editor={editor} />
+                <Threads editor={editor} />
 
             </div>
 

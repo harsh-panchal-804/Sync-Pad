@@ -547,8 +547,10 @@ function ToolBar() {
                 {
                     label: "Comment",
                     icon: MessageSquarePlus,
-                    isActive: false,
-                    onClick: () => console.log("message")
+                    isActive:editor?.isActive("liveblocksCommentMark") ,
+                    onClick: () => {
+                        editor?.chain().focus().addPendingComment().run();
+                    }
                 },
                 {
                     label: "List Todo",
