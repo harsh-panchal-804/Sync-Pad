@@ -9,6 +9,8 @@ A real-time collaborative editor offering rich formatting—bold, italics, font 
 **[Deployed on Vercel](http://sync-pad-seven.vercel.app/)**
 
 To co-edit with others just share the url of the document with the other users.
+
+
 Collaborative Editing Demo-> (It takes some time to load or go to the demo_video folder ) 
 ![Demo GIF](demo_video/sync-pad-collab.gif)
 
